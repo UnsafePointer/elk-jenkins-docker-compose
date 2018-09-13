@@ -1,0 +1,29 @@
+version: '3'
+services:
+  jenkins:
+    image: 'jenkins/jenkins:lts'
+    ports:
+      - "8080:8080"
+      - "5000:5000"
+    environment:
+      - JAVA_OPTS="-Djava.util.logging.config.file=/var/jenkins_home/log.properties"
+    volumes:
+      - ./jenkins:/var/jenkins_home
+  elasticsearch:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:6.4.0'
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+  kibana:
+    image: 'docker.elastic.co/kibana/kibana:6.4.0'
+    ports:
+      - "5601:5601"
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+  filebeat:
+    image: 'docker.elastic.co/beats/filebeat:6.4.0'
+    volumes:
+      - ./jenkins:/var/jenkins_home
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
